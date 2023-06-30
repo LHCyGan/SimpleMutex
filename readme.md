@@ -41,10 +41,10 @@ SimpleMutex 类包含一个名为 count_ 的 std::atomic 变量和一个名为 s
 
 在构造函数中，count_ 被初始化为 0。
 
-- **lock() 函数用于获取互斥锁。**它使用 fetch_add 操作和 std::memory_order_acquire 参数对 count_ 进行原子增加，并获取锁。
+-  lock() 函数用于获取互斥锁。它使用 fetch_add 操作和 std::memory_order_acquire 参数对 count_ 进行原子增加，并获取锁。
 如果在增加之前 count_ 的值大于 0，说明互斥锁已经被其他线程锁定。在这种情况下，函数调用 sema_.wait() 来阻塞当前线程，直到信号量被发信号，表示互斥锁可用。
 
-- **unlock() 函数用于释放互斥锁。**它使用 fetch_sub 操作和 std::memory_order_release 参数对 count_ 进行原子减少，并释放锁。
+- unlock() 函数用于释放互斥锁。它使用 fetch_sub 操作和 std::memory_order_release 参数对 count_ 进行原子减少，并释放锁。
 如果减少之前的 count_ 值仍大于 1，说明其他线程正在等待互斥锁。在这种情况下，函数调用 sema_.signal() 发信号给信号量，允许一个等待的线程获取互斥锁。
 
 通过结合原子变量 count_ 和信号量 sema_，该实现确保等待获取互斥锁的线程能够高效地阻塞，直到当前持有者释放锁。
